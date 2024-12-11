@@ -13,12 +13,40 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TripImport } from './routes/trip'
 
 // Create Virtual Routes
 
+const ServicesLazyImport = createFileRoute('/services')()
+const ContactLazyImport = createFileRoute('/contact')()
+const AboutUsLazyImport = createFileRoute('/about-us')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const ServicesLazyRoute = ServicesLazyImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/services.lazy').then((d) => d.Route))
+
+const ContactLazyRoute = ContactLazyImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/contact.lazy').then((d) => d.Route))
+
+const AboutUsLazyRoute = AboutUsLazyImport.update({
+  id: '/about-us',
+  path: '/about-us',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/about-us.lazy').then((d) => d.Route))
+
+const TripRoute = TripImport.update({
+  id: '/trip',
+  path: '/trip',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
@@ -37,6 +65,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/trip': {
+      id: '/trip'
+      path: '/trip'
+      fullPath: '/trip'
+      preLoaderRoute: typeof TripImport
+      parentRoute: typeof rootRoute
+    }
+    '/about-us': {
+      id: '/about-us'
+      path: '/about-us'
+      fullPath: '/about-us'
+      preLoaderRoute: typeof AboutUsLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -44,32 +100,52 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/trip': typeof TripRoute
+  '/about-us': typeof AboutUsLazyRoute
+  '/contact': typeof ContactLazyRoute
+  '/services': typeof ServicesLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/trip': typeof TripRoute
+  '/about-us': typeof AboutUsLazyRoute
+  '/contact': typeof ContactLazyRoute
+  '/services': typeof ServicesLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/trip': typeof TripRoute
+  '/about-us': typeof AboutUsLazyRoute
+  '/contact': typeof ContactLazyRoute
+  '/services': typeof ServicesLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/trip' | '/about-us' | '/contact' | '/services'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/trip' | '/about-us' | '/contact' | '/services'
+  id: '__root__' | '/' | '/trip' | '/about-us' | '/contact' | '/services'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  TripRoute: typeof TripRoute
+  AboutUsLazyRoute: typeof AboutUsLazyRoute
+  ContactLazyRoute: typeof ContactLazyRoute
+  ServicesLazyRoute: typeof ServicesLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  TripRoute: TripRoute,
+  AboutUsLazyRoute: AboutUsLazyRoute,
+  ContactLazyRoute: ContactLazyRoute,
+  ServicesLazyRoute: ServicesLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -82,11 +158,27 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/trip",
+        "/about-us",
+        "/contact",
+        "/services"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/trip": {
+      "filePath": "trip.tsx"
+    },
+    "/about-us": {
+      "filePath": "about-us.lazy.tsx"
+    },
+    "/contact": {
+      "filePath": "contact.lazy.tsx"
+    },
+    "/services": {
+      "filePath": "services.lazy.tsx"
     }
   }
 }
